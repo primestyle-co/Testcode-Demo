@@ -8,11 +8,20 @@
         "@tailwindcss/forms": "^0.5.2",
         "alpinejs": "^3.4.2",
         "autoprefixer": "^10.4.2",
-        "axios": "^0.25",
+        "axios": "^0.25.0",
         "laravel-vite-plugin": "^0.2.1",
         "lodash": "^4.17.19",
         "postcss": "^8.4.6",
         "tailwindcss": "^3.1.0",
-        "vite": "^2.9.11"
+        "vite": "^2.9.11",
+        "vue-loader": "^17.0.0"
+    },
+    "dependencies": {
+        "@vitejs/plugin-vue": "^2.3.3",
+        "ant-design-vue": "^3.2.9",
+        "vue": "^3.2.36",
+        "vue-axios": "^3.4.1",
+        "vue-router": "^4.0.16",
+        "vuex": "^4.0.2"
     }
 }
