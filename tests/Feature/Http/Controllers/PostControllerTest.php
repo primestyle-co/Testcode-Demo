@@ -168,14 +168,14 @@ class PostControllerTest extends TestCase
     }
 
     /**
-     * test testCreateFail
+     * test testCreateValidateMessage
      *
-     * @dataProvider createFailProvider
+     * @dataProvider createValidateMessageProvider
      *
      * @param mixed $params
      * @param mixed $errors
      */
-    public function testCreateFail($params, $errors)
+    public function testCreateValidateMessage($params, $errors)
     {
         $this->actingAs($this->user);
         $response = $this->postJson('api/posts/create', $params);
@@ -185,7 +185,7 @@ class PostControllerTest extends TestCase
 
     }
 
-    private function createFailProvider()
+    private function createValidateMessageProvider()
     {
         return [
             // case 1: title empty
@@ -248,14 +248,14 @@ class PostControllerTest extends TestCase
     }
 
     /**
-     * test testStoreFail
+     * test testStoreValidateMessage
      *
-     * @dataProvider storeFailProvider
+     * @dataProvider storeValidateMessageProvider
      *
      * @param mixed $params
      * @param mixed $errors
      */
-    public function testStoreFail($params, $errors)
+    public function testStoreValidateMessage($params, $errors)
     {
         $this->actingAs($this->user);
 
@@ -270,7 +270,7 @@ class PostControllerTest extends TestCase
 
     }
 
-    private function storeFailProvider()
+    private function storeValidateMessageProvider()
     {
         return [
             // case 1: title empty
@@ -315,7 +315,7 @@ class PostControllerTest extends TestCase
         ];
     }
 
-    public function testUserCannotEditOtherPost()
+    public function testCannotEditPostOfAnotherUser()
     {
         $this->actingAs($this->user);
 
@@ -353,9 +353,9 @@ class PostControllerTest extends TestCase
     }
 
     /**
-     * test testDetailFail
+     * test testDetailPostNotExistInDatabase
      */
-    public function testDetailFail()
+    public function testDetailPostNotExistInDatabase()
     {
         $this->actingAs($this->user);
 
@@ -395,9 +395,9 @@ class PostControllerTest extends TestCase
     }
 
     /**
-     * test testDeleteFail
+     * test testDeletePostNotExistInDatabase
      */
-    public function testDeleteFail()
+    public function testDeletePostNotExistInDatabase()
     {
         $this->actingAs($this->user);
         $response = $this->postJson('api/posts/delete/' . 100);
@@ -405,9 +405,9 @@ class PostControllerTest extends TestCase
     }
 
     /**
-     * test testUserCannotDeleteOtherPost
+     * test testCannotDeletePostOfAnotherUser
      */
-    public function testUserCannotDeleteOtherPost()
+    public function testCannotDeletePostOfAnotherUser()
     {
         $this->actingAs($this->user);
 
