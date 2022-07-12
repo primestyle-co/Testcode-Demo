@@ -72,7 +72,7 @@ class PostController extends Controller
             'title' => ['required'],
             'content' => ['required']
         ]);
-        $post = Post::findOrFail($id);
+        $post = Post::where(['id' => $id, 'created_by' => Auth::user()->id])->firstOrFail();
         $post->title = $request->title;
         $post->content = $request->content;
         $post->save();
@@ -99,7 +99,7 @@ class PostController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $post = Post::findOrFail($id);
+        $post =  Post::where(['id' => $id, 'created_by' => Auth::user()->id])->firstOrFail();
         $post->title = $request->title;
         $post->content = $request->content;
         $post->delete();
