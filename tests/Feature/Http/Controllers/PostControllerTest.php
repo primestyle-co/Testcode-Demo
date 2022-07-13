@@ -1,14 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Post;
-use App\Providers\RouteServiceProvider;
-use Illuminate\Auth\Events\Verified;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class PostControllerTest extends TestCase
@@ -21,31 +19,6 @@ class PostControllerTest extends TestCase
     {
         parent::setUp();
         $this->initData();
-
-    }
-
-    private function initData()
-    {
-        $user = User::factory()->create();
-        $this->user = $user;
-        for($i = 0; $i < 5; $i++) {
-            Post::factory()->create([
-                'title' => 'aaa' . $i,
-                'created_by' => $user->id,
-            ]);
-        }
-        for($i = 0; $i < 5; $i++) {
-            Post::factory()->create([
-                'title' => 'ccc' . $i,
-                'created_by' => $user->id,
-            ]);
-        }
-        for($i = 0; $i < 5; $i++) {
-            Post::factory()->create([
-                'title' => 'bbb' . $i,
-                'created_by' => $user->id,
-            ]);
-        }
     }
 
     public function testIndexWithoutAuth()
@@ -76,6 +49,7 @@ class PostControllerTest extends TestCase
             for ($idx = 0; $idx < $currentCount - 1; $idx++) {
                 $current = $response->json('posts.data')[$idx];
                 $next = $response->json('posts.data')[$idx + 1];
+
                 if ($filterParams['sort_direction'] == 'desc') {
                     self::assertTrue($current[$filterParams['sort_field']] >= $next[$filterParams['sort_field']]);
                 } else {
@@ -83,88 +57,6 @@ class PostControllerTest extends TestCase
                 }
             }
         }
-    }
-
-    private function indexProvider()
-    {
-        return [
-            // case 1: init
-            [   
-                [
-                    'title' => '',
-                    'author' => '',
-                    'page' => 1
-                ],
-                15,
-                10
-            ],
-            // case 2: filter by title
-            [   
-                [
-                    'title' => 'aa',
-                    'author' => '',
-                    'page' => 1
-                ],
-                5,
-                5
-            ],
-            // case 3: filter by special character
-            [   
-                [
-                    'title' => "'",
-                    'author' => '',
-                    'page' => 1
-                ],
-                0,
-                0
-            ],
-            // case 4: paging
-            [   
-                [
-                    'title' => '',
-                    'author' => '',
-                    'page' => 2
-                ],
-                15,
-                5
-            ],
-            // case 5: paging
-            [   
-                [
-                    'title' => '',
-                    'author' => '',
-                    'page' => 3
-                ],
-                15,
-                0
-            ],
-            // case 6: sorting
-            [   
-                [
-                    'title' => '',
-                    'author' => '',
-                    'sort_field' => 'title',
-                    'sort_direction' => 'asc',
-                    'page' => 1
-                ],
-                15,
-                10,
-                true
-            ],
-            // case 7: sorting
-            [   
-                [
-                    'title' => '',
-                    'author' => '',
-                    'sort_field' => 'title',
-                    'sort_direction' => 'desc',
-                    'page' => 1
-                ],
-                15,
-                10,
-                true
-            ],
-        ];
     }
 
     /**
@@ -182,56 +74,10 @@ class PostControllerTest extends TestCase
         $response->assertStatus(422);
         // $response->assertExactJson('errors', $errors);
         $response->assertJson(['errors' => $errors]);
-
-    }
-
-    private function createValidateMessageProvider()
-    {
-        return [
-            // case 1: title empty
-            [   
-                [
-                    'title' => '',
-                    'content' => 'test1',
-                ],
-                [
-                    'title' => [
-                        'The title field is required.'
-                    ],
-                ]
-            ],
-            // case 2: content empty
-            [   
-                [
-                    'title' => 'test 1',
-                    'content' => '',
-                ],
-                [
-                    'content' => [
-                        'The content field is required.'
-                    ]
-                ]
-            ],
-            // case 3:
-            [   
-                [
-                    'title' => '',
-                    'content' => '',
-                ],
-                [
-                    'title' => [
-                        'The title field is required.'
-                    ],
-                    'content' => [
-                        'The content field is required.'
-                    ]
-                ]
-            ],
-        ];
     }
 
     /**
-     * test testCreatePostSuccess 
+     * test testCreatePostSuccess
      */
     public function testCreateSuccess()
     {
@@ -244,7 +90,6 @@ class PostControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('status', 'ok');
         $this->assertDatabaseHas('posts', $data + ['created_by' => $this->user->id]);
-
     }
 
     /**
@@ -267,52 +112,6 @@ class PostControllerTest extends TestCase
         $response->assertStatus(422);
         // $response->assertExactJson('errors', $errors);
         $response->assertJson(['errors' => $errors]);
-
-    }
-
-    private function storeValidateMessageProvider()
-    {
-        return [
-            // case 1: title empty
-            [   
-                [
-                    'title' => '',
-                    'content' => 'test1',
-                ],
-                [
-                    'title' => [
-                        'The title field is required.'
-                    ],
-                ]
-            ],
-            // case 2: content empty
-            [   
-                [
-                    'title' => 'test 1',
-                    'content' => '',
-                ],
-                [
-                    'content' => [
-                        'The content field is required.'
-                    ]
-                ]
-            ],
-            // case 3:
-            [   
-                [
-                    'title' => '',
-                    'content' => '',
-                ],
-                [
-                    'title' => [
-                        'The title field is required.'
-                    ],
-                    'content' => [
-                        'The content field is required.'
-                    ]
-                ]
-            ],
-        ];
     }
 
     public function testCannotEditPostOfAnotherUser()
@@ -329,10 +128,10 @@ class PostControllerTest extends TestCase
             'content' => 'content update',
         ]);
         $response->assertStatus(404);
-
     }
+
     /**
-     * test testStoreSuccess 
+     * test testStoreSuccess
      */
     public function testStoreSuccess()
     {
@@ -349,7 +148,6 @@ class PostControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJsonPath('status', 'ok');
         $this->assertDatabaseHas('posts', $data);
-
     }
 
     /**
@@ -366,7 +164,6 @@ class PostControllerTest extends TestCase
 
         $response = $this->getJson('api/posts/' . 100);
         $response->assertStatus(404);
-
     }
 
     /**
@@ -391,7 +188,6 @@ class PostControllerTest extends TestCase
             'content' => $post->content,
             'created_by' => $this->user->id,
         ]]);
-
     }
 
     /**
@@ -442,5 +238,204 @@ class PostControllerTest extends TestCase
         $this->assertSoftDeleted('posts', [
             'id' => $post->id
         ]);
+    }
+
+    private function initData()
+    {
+        $user = User::factory()->create();
+        $this->user = $user;
+
+        for ($i = 0; $i < 5; $i++) {
+            Post::factory()->create([
+                'title' => 'aaa' . $i,
+                'created_by' => $user->id,
+            ]);
+        }
+
+        for ($i = 0; $i < 5; $i++) {
+            Post::factory()->create([
+                'title' => 'ccc' . $i,
+                'created_by' => $user->id,
+            ]);
+        }
+
+        for ($i = 0; $i < 5; $i++) {
+            Post::factory()->create([
+                'title' => 'bbb' . $i,
+                'created_by' => $user->id,
+            ]);
+        }
+    }
+
+    private function indexProvider()
+    {
+        return [
+            // case 1: init
+            [
+                [
+                    'title' => '',
+                    'author' => '',
+                    'page' => 1
+                ],
+                15,
+                10
+            ],
+            // case 2: filter by title
+            [
+                [
+                    'title' => 'aa',
+                    'author' => '',
+                    'page' => 1
+                ],
+                5,
+                5
+            ],
+            // case 3: filter by special character
+            [
+                [
+                    'title' => "'",
+                    'author' => '',
+                    'page' => 1
+                ],
+                0,
+                0
+            ],
+            // case 4: paging
+            [
+                [
+                    'title' => '',
+                    'author' => '',
+                    'page' => 2
+                ],
+                15,
+                5
+            ],
+            // case 5: paging
+            [
+                [
+                    'title' => '',
+                    'author' => '',
+                    'page' => 3
+                ],
+                15,
+                0
+            ],
+            // case 6: sorting
+            [
+                [
+                    'title' => '',
+                    'author' => '',
+                    'sort_field' => 'title',
+                    'sort_direction' => 'asc',
+                    'page' => 1
+                ],
+                15,
+                10,
+                true
+            ],
+            // case 7: sorting
+            [
+                [
+                    'title' => '',
+                    'author' => '',
+                    'sort_field' => 'title',
+                    'sort_direction' => 'desc',
+                    'page' => 1
+                ],
+                15,
+                10,
+                true
+            ],
+        ];
+    }
+
+    private function createValidateMessageProvider()
+    {
+        return [
+            // case 1: title empty
+            [
+                [
+                    'title' => '',
+                    'content' => 'test1',
+                ],
+                [
+                    'title' => [
+                        'The title field is required.'
+                    ],
+                ]
+            ],
+            // case 2: content empty
+            [
+                [
+                    'title' => 'test 1',
+                    'content' => '',
+                ],
+                [
+                    'content' => [
+                        'The content field is required.'
+                    ]
+                ]
+            ],
+            // case 3:
+            [
+                [
+                    'title' => '',
+                    'content' => '',
+                ],
+                [
+                    'title' => [
+                        'The title field is required.'
+                    ],
+                    'content' => [
+                        'The content field is required.'
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    private function storeValidateMessageProvider()
+    {
+        return [
+            // case 1: title empty
+            [
+                [
+                    'title' => '',
+                    'content' => 'test1',
+                ],
+                [
+                    'title' => [
+                        'The title field is required.'
+                    ],
+                ]
+            ],
+            // case 2: content empty
+            [
+                [
+                    'title' => 'test 1',
+                    'content' => '',
+                ],
+                [
+                    'content' => [
+                        'The content field is required.'
+                    ]
+                ]
+            ],
+            // case 3:
+            [
+                [
+                    'title' => '',
+                    'content' => '',
+                ],
+                [
+                    'title' => [
+                        'The title field is required.'
+                    ],
+                    'content' => [
+                        'The content field is required.'
+                    ]
+                ]
+            ],
+        ];
     }
 }
