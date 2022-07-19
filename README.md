@@ -18,12 +18,20 @@ Create test file in this folder tests/Feature/
 You can refer to this file tests/Feature/Http/Controllers/PostControllerTest.php
 ### Run UnitTest
 run all test 
-```php artisan test --testsuite=Feature```
-run one file `php artisan test --testsuite=Feature 'tests/Feature/Http/Controllers/PostControllerTest.php'`
+```
+php artisan test --testsuite=Feature
+```
+run one file
+```
+php artisan test --testsuite=Feature 'tests/Feature/Http/Controllers/PostControllerTest.php'
+```
 
-run one function in file `php artisan test --testsuite=Feature --filter 'testIndexFailWithoutAuth' 'tests/Feature/Http/Controllers/PostControllerTest.php'`
+run one function in file 
+```
+php artisan test --testsuite=Feature --filter 'testIndexFailWithoutAuth' 'tests/Feature/Http/Controllers/PostControllerTest.php'
+```
 
-you can refer this link below it very clear and detailed.
+you can refer this link it very clear and detailed.
 https://laravel.com/docs/9.x/testing
 
 ## UnitTest Vue
