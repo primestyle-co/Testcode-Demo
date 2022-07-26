@@ -35,4 +35,12 @@ you can refer this link it very clear and detailed.
 https://laravel.com/docs/9.x/testing
 
 ## UnitTest Vue
-not yet implement.
+
+### Run UnitTest
+run all test 
+```
+npm run test
+```
+
+you can refer this link it very clear and detailed.
+https://vitest.dev/
